@@ -16,10 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 菜品管理
+ */
 @RestController
 @RequestMapping("/dish")
 @Slf4j
@@ -44,7 +46,7 @@ public class DishController {
     }
 
     /**
-     * 分页
+     * 分页查询，跟SetmealController里的分页类似，这里使用的是stream的lambda表达式遍历
      * @param page
      * @param pageSize
      * @param name
@@ -152,4 +154,21 @@ public class DishController {
         return R.success("success");
     }
 
+    /**
+     * 根据分类id回显菜品
+     * @param dish
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Dish>> list(Dish dish){
+        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
+        //查询状态为1的菜品（起售状态的菜品）
+        lambdaQueryWrapper.eq(Dish::getStatus,1);
+
+        lambdaQueryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+
+        List<Dish> list = dishService.list(lambdaQueryWrapper);
+        return R.success(list);
+    }
 }

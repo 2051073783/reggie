@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ *分类管理
+ */
 @RestController
 @RequestMapping("/category")
 @Slf4j
@@ -49,6 +52,13 @@ public class CategoryController {
         categoryService.updateById(category);
         return R.success("success");
     }
+
+    /**
+     * type=1:在菜品新增页面展示菜品分类
+     * type=2:在套餐新增页面展示套餐分类
+     * @param category
+     * @return
+     */
     @GetMapping("/list")
     public R<List<Category>> list(Category category){
         LambdaQueryWrapper<Category> lambdaQueryWrapper = new LambdaQueryWrapper<>();

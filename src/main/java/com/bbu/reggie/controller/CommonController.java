@@ -20,6 +20,13 @@ import java.util.UUID;
 public class CommonController {
     @Value("${reggie.path}")
     private String basePath;
+
+    /**
+     * 图片的上传
+     * @param file
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/upload")
     public R<String> upload(MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
@@ -44,6 +51,12 @@ public class CommonController {
 
         return R.success(fileName);
     }
+
+    /**
+     * 图片的下载
+     * @param name
+     * @param response
+     */
     @GetMapping("/download")
     public void download(String name, HttpServletResponse response){
         try {
