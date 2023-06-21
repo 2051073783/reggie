@@ -6,4 +6,6 @@ import com.bbu.reggie.entity.Dish;
 
 public interface DishService extends IService<Dish> {
     public void saveWithFlavor(DishDto dishDto);
+
+    void updateWithFlavor(DishDto dishDto);
 }
