@@ -1,7 +1,6 @@
 package com.bbu.reggie.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.bbu.reggie.Dto.DishDto;
 import com.bbu.reggie.entity.Dish;
@@ -21,6 +20,8 @@ import java.util.stream.Collectors;
 public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements DishService {
     @Autowired
     private DishFlavorService dishFlavorService;
+    @Autowired
+    private DishMapper dishMapper;
     @Autowired
     private CategoryService categoryService;
     @Transactional
@@ -57,6 +58,11 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
             return item;
         }).collect(Collectors.toList());
         dishFlavorService.saveBatch(flavors);
+    }
+
+    @Override
+    public int updateStatus(Long ids,int status) {
+        return dishMapper.updateStatus(ids,status);
     }
 
 }

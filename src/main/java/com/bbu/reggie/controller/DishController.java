@@ -13,8 +13,10 @@ import com.bbu.reggie.service.DishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,14 @@ public class DishController {
         dishService.saveWithFlavor(dishDto);
         return R.success("success");
     }
+
+    /**
+     * 分页
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
     @GetMapping("/page")
     public R<Page> page(int page,int pageSize,String name){
 
@@ -73,7 +83,12 @@ public class DishController {
 
         return R.success(dishDtoPage);
     }
-    //回现数据
+
+    /**
+     * 修改中的回显数据
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public R<DishDto> getById(@PathVariable Long id){
         log.info("id------->"+id);
@@ -89,9 +104,52 @@ public class DishController {
         return R.success(dishDto);
     }
 
+    /**
+     * 菜品的修改
+     * @param dishDto
+     * @return
+     */
     @PutMapping
     public R<String> update(@RequestBody DishDto dishDto){
         dishService.updateWithFlavor(dishDto);
         return R.success("success");
     }
+
+    /**
+     * 菜品的停售和起售及批量操作
+     * @param status
+     * @param ids
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public R<String> status(@PathVariable int status, Long[] ids){
+        log.info("ids-------->"+ids);
+        log.info("status----------->"+status);
+        for (Long id : ids) {
+            int i = dishService.updateStatus(id, status);
+            if (i==0){
+                return R.error("停售失败");
+            }
+        }
+        return R.success("success");
+    }
+
+    /**
+     * 菜品的删除和批量删除
+     * @param ids
+     * @return
+     */
+    @Transactional
+    @DeleteMapping
+    public R<String> delete(Long[] ids){
+        for (Long id : ids) {
+//            log.info("ids-------->"+id);
+            boolean b = dishService.removeById(id);
+            if (!b){
+                return R.error("操作失败111");
+            }
+        }
+        return R.success("success");
+    }
+
 }
