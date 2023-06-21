@@ -129,7 +129,7 @@ public class DishController {
         log.info("status----------->"+status);
         for (Long id : ids) {
             int i = dishService.updateStatus(id, status);
-            if (i==0){
+            if (i == 0){
                 return R.error("停售失败");
             }
         }
