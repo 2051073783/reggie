@@ -38,7 +38,7 @@ public class UserController {
             String code = ValidateCodeUtils.generateValidateCode(4).toString();
 
             log.info("code----------->"+code);
-            SMSUtils.sendMessage("瑞吉外卖","SMS_461525158",phone,code);
+//            SMSUtils.sendMessage("瑞吉外卖","SMS_461525158",phone,code);
 
             session.setAttribute(phone,code);
             return R.success("success");
@@ -67,12 +67,12 @@ public class UserController {
 
             User user = userService.getOne(lambdaQueryWrapper);
             if (user == null){
-                User u = new User();
-                u.setPhone(phone);
-                u.setStatus(1);
-                userService.save(u);
-                session.setAttribute("user",u.getId());
+                user =new User();
+                user.setPhone(phone);
+                user.setStatus(1);
+                userService.save(user);
             }
+            session.setAttribute("user",user.getId());
             return R.success(user);
         }
         return R.error("登录失败");
