@@ -97,6 +97,9 @@ public class AddressBookController {
         queryWrapper.eq(AddressBook::getIsDefault,1);
 
         AddressBook one = addressBookService.getOne(queryWrapper);
+        if (one == null){
+            return R.error("没有默认地址");
+        }
         return R.success(one);
     }
 
