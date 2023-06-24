@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -159,8 +160,21 @@ public class DishController {
      * @param dish
      * @return
      */
+//    @GetMapping("/list")
+//    public R<List<Dish>> list(Dish dish){
+//        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+//        lambdaQueryWrapper.eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
+//        //查询状态为1的菜品（起售状态的菜品）
+//        lambdaQueryWrapper.eq(Dish::getStatus,1);
+//
+//        lambdaQueryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+//
+//        List<Dish> list = dishService.list(lambdaQueryWrapper);
+//        return R.success(list);
+//    }
+
     @GetMapping("/list")
-    public R<List<Dish>> list(Dish dish){
+    public R<List<DishDto>> list(Dish dish){
         LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
         //查询状态为1的菜品（起售状态的菜品）
@@ -169,6 +183,51 @@ public class DishController {
         lambdaQueryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
 
         List<Dish> list = dishService.list(lambdaQueryWrapper);
-        return R.success(list);
+
+        /**
+         * 使用stream().map((item)-> 循环把每一个dish对象复制到dishDto对象，并且更具分类的id查出dishFlavor
+         * 放到dishDto中的Flavors的集合中。
+         */
+//        List<DishDto> dishDtoList = list.stream().map((item)-> {
+//            DishDto dishDto = new DishDto();
+//            BeanUtils.copyProperties(item, dishDto);
+//
+//            Long dishId = item.getId();
+//
+//            LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
+//            queryWrapper.eq(DishFlavor::getDishId, dishId);
+//
+//            List<DishFlavor> dishFlavorList = dishFlavorService.list(queryWrapper);
+//
+//            dishDto.setFlavors(dishFlavorList);
+//
+//            return dishDto;
+//
+//        }).collect(Collectors.toList());
+        /**
+         * 使用for循环把每一个dish对象复制到dishDto对象，并且更具分类的id查出dishFlavor
+         * 放到dishDto中的Flavors的集合中。
+         * 最后把封好的dishDto对象添加到dishDtoList集合中
+         */
+
+        List<DishDto> dishDtoList = new ArrayList<>();
+
+        for (Dish oneDish : list) {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(oneDish,dishDto);
+
+            Long dishId = oneDish.getId();
+
+            LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(DishFlavor::getDishId, dishId);
+
+            List<DishFlavor> dishFlavorList = dishFlavorService.list(queryWrapper);
+
+            dishDto.setFlavors(dishFlavorList);
+
+            dishDtoList.add(dishDto);
+        }
+
+        return R.success(dishDtoList);
     }
 }

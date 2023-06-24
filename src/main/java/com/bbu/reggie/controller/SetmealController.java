@@ -2,8 +2,11 @@ package com.bbu.reggie.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.bbu.reggie.Dto.DishDto;
 import com.bbu.reggie.Dto.SetmealDto;
 import com.bbu.reggie.common.R;
+import com.bbu.reggie.entity.Dish;
+import com.bbu.reggie.entity.DishFlavor;
 import com.bbu.reggie.entity.Setmeal;
 import com.bbu.reggie.entity.SetmealDish;
 import com.bbu.reggie.service.CategoryService;
@@ -108,5 +111,19 @@ public class SetmealController {
             setmealService.updateStatus(id,status);
         }
         return R.success("success");
+    }
+
+    @GetMapping("/list")
+    public R<List<Setmeal>> list(Setmeal setmeal){
+
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(setmeal.getCategoryId() != null,Setmeal::getCategoryId,setmeal.getCategoryId());
+        queryWrapper.eq(Setmeal::getStatus,setmeal.getStatus());
+        queryWrapper.orderByAsc(Setmeal::getUpdateTime);
+
+        List<Setmeal> list = setmealService.list(queryWrapper);
+
+
+        return R.success(list);
     }
 }
