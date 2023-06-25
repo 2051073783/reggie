@@ -18,6 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
+/**
+ * 用户管理
+ */
 @RestController
 @RequestMapping("/user")
 @Slf4j

@@ -36,8 +36,9 @@ public class AddressBookController {
      */
     @GetMapping("/list")
     public R<List<AddressBook>> list(){
+        Long userId = BaseContext.getCurrentId();
         LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(AddressBook::getUserId,BaseContext.getCurrentId());
+        queryWrapper.eq(AddressBook::getUserId,userId);
 
         List<AddressBook> list = addressBookService.list(queryWrapper);
         return R.success(list);
