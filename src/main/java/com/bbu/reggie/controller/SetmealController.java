@@ -14,6 +14,8 @@ import com.bbu.reggie.service.SetmealDishService;
 import com.bbu.reggie.service.SetmealService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ public class SetmealController {
      * @param setmealDto
      * @return
      */
+    @CacheEvict(value = "setmeal",allEntries = true)
     @PostMapping
     public R<String> save(@RequestBody SetmealDto setmealDto){
         setmealService.save(setmealDto);
@@ -93,6 +96,7 @@ public class SetmealController {
      * @param ids
      * @return
      */
+    @CacheEvict(value = "setmeal",allEntries = true)
     @DeleteMapping
     public R<String> delete(@RequestParam List<Long> ids){
         setmealService.deleteWithDish(ids);
@@ -105,6 +109,7 @@ public class SetmealController {
      * @param ids
      * @return
      */
+    @CacheEvict(value = "setmeal",allEntries = true)
     @PostMapping("/status/{status}")
     public R<String> update(@PathVariable int status,Long[]  ids){
         for (Long id : ids) {
@@ -113,6 +118,7 @@ public class SetmealController {
         return R.success("success");
     }
 
+    @Cacheable(value = "setmeal",key = "#setmeal.categoryId + '_' + #setmeal.status")
     @GetMapping("/list")
     public R<List<Setmeal>> list(Setmeal setmeal){
 
@@ -122,8 +128,6 @@ public class SetmealController {
         queryWrapper.orderByAsc(Setmeal::getUpdateTime);
 
         List<Setmeal> list = setmealService.list(queryWrapper);
-
-
         return R.success(list);
     }
 }

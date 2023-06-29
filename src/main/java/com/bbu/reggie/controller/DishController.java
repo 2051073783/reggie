@@ -191,7 +191,7 @@ public class DishController {
     public R<List<DishDto>> list(Dish dish){
         List<DishDto> dishDtoList =null;
 
-        String key = "dish_"+dish.getCategoryId()+"_"+dish.getStatus();
+        String key = "dish_"+dish.getCategoryId()+"_1";
         dishDtoList = (List<DishDto>) redisTemplate.opsForValue().get(key);
         if (dishDtoList != null){
             return R.success(dishDtoList);
